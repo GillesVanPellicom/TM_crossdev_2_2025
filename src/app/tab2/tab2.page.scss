@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+ion-toolbar {
+  /* Match the OS/theme background color to avoid a visible white strip at the top */
+  --ion-toolbar-background: var(--ion-background-color);
+}
+
+.keypad {
+  padding: 8px;
+}
+
+.keypad ion-button {
+  --border-radius: 10px;
+  height: 48px;
+  --background: var(--app-accent-color);
+  --color: #fff;
+}
+
+.keypad ion-button[color] {
+  --background: initial;
+  --color: initial;
+}
+
+ion-card {
+  margin: 12px;
+}
+
+/* Fallback text display under the canvas */
+.text-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-top: 6px;
+}
+
+.text-display .expr {
+  font-size: 14px;
+  color: var(--ion-color-medium, #6b7280);
+}
+
+.text-display .res {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-accent-color, #3880ff);
+}

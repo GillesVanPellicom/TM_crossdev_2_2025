@@ -1,17 +1,76 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
+      Scientific Calculator
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openSettings()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content>
+      <app-display-canvas></app-display-canvas>
+      <!-- Text fallback so users always see current input/result -->
+      <div class="text-display">
+        <div class="expr">{{ (calc.expression$ | async) || '\u00A0' }}</div>
+        <div class="res">{{ (calc.result$ | async) || '0' }}</div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-grid class="keypad">
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" color="medium" (click)="onClear()">C</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" color="medium" (click)="onBack()">⌫</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" color="medium" (click)="onParen('(')">(</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" color="medium" (click)="onParen(')')">)</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('sin')">sin</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('cos')">cos</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('tan')">tan</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onOp('/')">÷</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('sqrt')">√</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('ln')">ln</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onFunc('log')">log</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onPow()">^</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('7')">7</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('8')">8</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('9')">9</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onOp('*')">×</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('4')">4</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('5')">5</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('6')">6</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onOp('-')">−</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('1')">1</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('2')">2</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('3')">3</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onOp('+')">+</ion-button></ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="3"><ion-button expand="block" (click)="onConst('pi')">π</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDigit('0')">0</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" (click)="onDot()">.</ion-button></ion-col>
+      <ion-col size="3"><ion-button expand="block" color="success" (click)="onEquals()">=</ion-button></ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal [isOpen]="settingsOpen" (didDismiss)="settingsOpen=false">
+    <ng-template>
+      <app-settings-modal (close)="settingsOpen=false"></app-settings-modal>
+    </ng-template>
+  </ion-modal>
 </ion-content>

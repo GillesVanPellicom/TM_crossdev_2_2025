@@ -1,15 +1,68 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardContent,
+  IonButtons,
+  IonIcon,
+  IonModal,
+} from '@ionic/angular/standalone';
+import { DisplayCanvasComponent } from '../ui/display-canvas/display-canvas.component';
+import { SettingsModalComponent } from '../ui/settings-modal/settings-modal.component';
+import { CalculatorService } from '../services/calculator.service';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent]
+  standalone: true,
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardContent,
+    IonButtons,
+    IonIcon,
+    IonModal,
+    DisplayCanvasComponent,
+    SettingsModalComponent,
+  ],
 })
 export class Tab2Page {
+  settingsOpen = false;
 
-  constructor() {}
+  constructor(public calc: CalculatorService) {}
+
+  openSettings() {
+    this.settingsOpen = true;
+  }
+
+  onDigit(d: string) { this.calc.digit(d); }
+  onOp(op: string) { this.calc.op(op); }
+  onDot() { this.calc.dot(); }
+  onBack() { this.calc.backspace(); }
+  onClear() { this.calc.clear(); }
+  onEquals() { this.calc.equals(); }
+
+  onPow() { this.calc.pow(); }
+  onParen(ch: '(' | ')') { this.calc.paren(ch); }
+  onFunc(name: 'sin'|'cos'|'tan'|'sqrt'|'ln'|'log') { this.calc.func(name); }
+  onConst(name: 'pi'|'e') { this.calc.constant(name); }
 
 }
