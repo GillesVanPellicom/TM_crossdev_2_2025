@@ -19,6 +19,17 @@ import { DisplayCanvasComponent } from '../ui/display-canvas/display-canvas.comp
 import { SettingsModalComponent } from '../ui/settings-modal/settings-modal.component';
 import { CalculatorService } from '../services/calculator.service';
 
+/**
+ * Tab1Page (Basic Calculator)
+ * ---------------------------
+ * UI wrapper for the basic calculator. It renders:
+ *  - A header with a Settings button (opens the settings modal)
+ *  - A display card with canvas + text fallback
+ *  - A numeric keypad wired to CalculatorService methods
+ *
+ * All business logic lives in CalculatorService; this page simply forwards
+ * button clicks and exposes the service to the template for live bindings.
+ */
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',

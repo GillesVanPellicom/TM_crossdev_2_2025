@@ -1,0 +1,72 @@
+Project: Ionic Angular Calculator — Deliverables Mapping
+Date: 2025-11-18
+
+This document lists the requested deliverables and points to concrete examples in the codebase that fulfill each item.
+
+1) Use standard Ionic components (buttons, inputs, cards)
+   - Example A: Basic keypad built with Ion components
+     • File: src/app/tab1/tab1.page.html
+       - Uses <ion-grid>, <ion-row>, <ion-col>, and many <ion-button> elements for the keypad.
+       - Wrapped in an <ion-card> with <ion-card-content> for the display area.
+   - Example B: Scientific keypad and layout
+     • File: src/app/tab2/tab2.page.html
+       - Same Ion components plus additional scientific buttons.
+
+2) At least one custom-drawn component using Canvas for display
+   - Example: Canvas-based display component
+     • File: src/app/ui/display-canvas/display-canvas.component.ts
+       - Renders expression/result on a high-DPI-aware <canvas>.
+       - Subscribes to CalculatorService (expression$/result$) and SettingsService (accentColor$).
+
+3) Implement a “Settings” page as a modal where users can change preferences (accent color)
+   - Example: Settings modal component and usage
+     • File: src/app/ui/settings-modal/settings-modal.component.ts
+       - Standalone component with a native <input type="color"> and Save button.
+     • File: src/app/tab1/tab1.page.html (and tab2.page.html)
+       - Contains <ion-modal> that renders <app-settings-modal>; opened by the gear button in the header.
+
+4) Store preferences using Capacitor Storage (Preferences)
+   - Example: SettingsService persistence
+     • File: src/app/services/settings.service.ts
+       - Uses @capacitor/preferences to persist the accent color (key: "accentColor").
+       - Loads on startup and mirrors value to CSS var --app-accent-color.
+
+5) Use at least two pages: “Calculator” and “Settings,” with shared state via an Angular service
+   - Pages:
+     • Basic Calculator: src/app/tab1/tab1.page.ts + .html
+     • Scientific Calculator: src/app/tab2/tab2.page.ts + .html
+     • Settings is implemented as a modal page: src/app/ui/settings-modal/settings-modal.component.ts
+   - Shared Services:
+     • CalculatorService (expression/result state): src/app/services/calculator.service.ts
+     • SettingsService (accent color): src/app/services/settings.service.ts
+
+6) Integrate at least one non-default Capacitor plugin (Haptics)
+   - Example: Haptic feedback on button actions
+     • File: src/app/services/calculator.service.ts
+       - Imports from @capacitor/haptics and triggers Haptics.impact() within input methods (e.g., digit, equals).
+     • package.json includes "@capacitor/haptics" dependency.
+
+7) Ensure proper navigation between pages and reactive updates when settings change
+   - Navigation & Tabs:
+     • File: src/app/tabs/tabs.routes.ts — defines two tabs (Basic, Scientific) and default redirect.
+     • File: src/app/tabs/tabs.page.html — tab bar UI for switching between the two calculators.
+   - Reactive Settings:
+     • File: src/app/services/settings.service.ts — BehaviorSubject-backed accentColor$ stream and CSS var.
+     • Display and keypad styles update automatically via --app-accent-color (see SCSS in tab1/tab1.page.scss and tab2/tab2.page.scss).
+
+8) Additional requirement updates acknowledged in this project
+   - Remove Tab 3; have Tab 1 = Basic, Tab 2 = Scientific
+     • File: src/app/tabs/tabs.routes.ts — only tab1 and tab2 routes remain.
+     • File: src/app/tabs/tabs.page.html — only two tab buttons (Basic, Scientific).
+   - Visible output confirmed
+     • Both tabs include a text fallback display bound with the async pipe under the canvas.
+       - Files: src/app/tab1/tab1.page.html, src/app/tab2/tab2.page.html
+
+How to access the Settings popup
+ - On either tab, tap the gear icon (settings-outline) in the header toolbar.
+ - The modal appears with a color picker; tap Save to persist the new accent color.
+
+Notes on implementation
+ - App startup loads saved preferences early: src/app/app.component.ts injects SettingsService to apply the CSS var before UI renders.
+ - The canvas display resizes for device pixel ratio and window/layout changes, preserving crisp text.
+ - Haptics work on devices/emulators that support them.

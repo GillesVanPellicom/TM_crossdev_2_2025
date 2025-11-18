@@ -9,13 +9,20 @@ import {
   IonLabel,
   IonButtons,
   IonButton,
-  IonSegment,
-  IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
 
+/**
+ * SettingsModalComponent
+ * ----------------------
+ * Simple modal that allows picking and saving the app accent color.
+ *
+ * The color is previewed immediately by binding to a native <input type="color">,
+ * and persisted through SettingsService when Save is clicked. The component emits
+ * `close` so the host <ion-modal> can be dismissed.
+ */
 @Component({
   selector: 'app-settings-modal',
   template: `
@@ -55,8 +62,6 @@ import { SettingsService } from '../../services/settings.service';
     IonLabel,
     IonButtons,
     IonButton,
-    IonSegment,
-    IonSegmentButton,
   ],
 })
 export class SettingsModalComponent {

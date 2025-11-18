@@ -1,3 +1,9 @@
+<!--
+  Tab 1: Basic Calculator
+  - Header includes a Settings button that opens the settings modal
+  - Card contains the canvas display and a text fallback (always visible)
+  - Keypad buttons delegate to CalculatorService via handlers in tab1.page.ts
+-->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
@@ -15,7 +21,8 @@
   <ion-card>
     <ion-card-content>
       <app-display-canvas></app-display-canvas>
-      <!-- Text fallback so users always see current input/result -->
+      <!-- Text fallback so users always see current input/result,
+           even if Canvas cannot render on a given platform -->
       <div class="text-display">
         <div class="expr">{{ (calc.expression$ | async) || '\u00A0' }}</div>
         <div class="res">{{ (calc.result$ | async) || '0' }}</div>
@@ -23,6 +30,7 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- Basic keypad: numeric and basic ops -->
   <ion-grid class="keypad">
     <ion-row>
       <ion-col size="3"><ion-button expand="block" color="medium" (click)="onClear()">C</ion-button></ion-col>
@@ -55,6 +63,7 @@
     </ion-row>
   </ion-grid>
 
+  <!-- Settings modal is controlled by the settingsOpen flag in the page class -->
   <ion-modal [isOpen]="settingsOpen" (didDismiss)="settingsOpen=false">
     <ng-template>
       <app-settings-modal (close)="settingsOpen=false"></app-settings-modal>

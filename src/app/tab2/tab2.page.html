@@ -1,3 +1,9 @@
+<!--
+  Tab 2: Scientific Calculator
+  - Header with Settings button (opens settings modal)
+  - Card with canvas display + text fallback
+  - Scientific keypad adds functions, constants, parentheses, exponent
+-->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
@@ -24,24 +30,28 @@
   </ion-card>
 
   <ion-grid class="keypad">
+    <!-- Row: clear/back and parentheses -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" color="medium" (click)="onClear()">C</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" color="medium" (click)="onBack()">⌫</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" color="medium" (click)="onParen('(')">(</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" color="medium" (click)="onParen(')')">)</ion-button></ion-col>
     </ion-row>
+    <!-- Row: trig functions and divide -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('sin')">sin</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('cos')">cos</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('tan')">tan</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onOp('/')">÷</ion-button></ion-col>
     </ion-row>
+    <!-- Row: roots/logs and exponent -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('sqrt')">√</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('ln')">ln</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onFunc('log')">log</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onPow()">^</ion-button></ion-col>
     </ion-row>
+    <!-- Rows: digits and operators -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" (click)="onDigit('7')">7</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onDigit('8')">8</ion-button></ion-col>
@@ -60,6 +70,7 @@
       <ion-col size="3"><ion-button expand="block" (click)="onDigit('3')">3</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onOp('+')">+</ion-button></ion-col>
     </ion-row>
+    <!-- Final row: constants, zero, dot and equals -->
     <ion-row>
       <ion-col size="3"><ion-button expand="block" (click)="onConst('pi')">π</ion-button></ion-col>
       <ion-col size="3"><ion-button expand="block" (click)="onDigit('0')">0</ion-button></ion-col>

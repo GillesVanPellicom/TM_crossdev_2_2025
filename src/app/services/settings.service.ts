@@ -6,6 +6,16 @@ const PREFS_KEYS = {
   ACCENT_COLOR: 'accentColor',
 };
 
+/**
+ * SettingsService
+ * ----------------
+ * Central place to manage user preferences (currently only `accentColor`).
+ *
+ * - Persists values using Capacitor Preferences so they survive app restarts.
+ * - Exposes a BehaviorSubject-backed stream so components can react to changes.
+ * - Mirrors the current accent color into a global CSS custom property
+ *   `--app-accent-color` for easy theming in templates/SCSS.
+ */
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   // Default Ionic blue accent
@@ -19,6 +29,7 @@ export class SettingsService {
     this.loadPreferences();
   }
 
+  /** Load saved preferences from device storage and publish them. */
   private async loadPreferences() {
     try {
       const { value } = await Preferences.get({ key: PREFS_KEYS.ACCENT_COLOR });
@@ -30,6 +41,10 @@ export class SettingsService {
     }
   }
 
+  /**
+   * Update the accent color, optionally persisting to device storage.
+   * Also updates the global CSS variable used by styles and components.
+   */
   async setAccentColor(color: string, persist = true) {
     this.accentColorSubject.next(color);
     // update a global CSS var for easy theming
@@ -39,6 +54,7 @@ export class SettingsService {
     }
   }
 
+  /** Get the current accent color synchronously. */
   getAccentColor(): string {
     return this.accentColorSubject.value;
   }

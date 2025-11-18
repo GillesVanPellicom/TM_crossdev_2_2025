@@ -1,3 +1,8 @@
+/*
+  Styles for Tab 2 (Scientific Calculator)
+  - Keep toolbar background equal to the app background to avoid a visible white strip
+  - Use the dynamic CSS var --app-accent-color for keypad buttons (set by SettingsService)
+*/
 :host {
   display: block;
 }

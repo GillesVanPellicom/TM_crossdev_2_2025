@@ -11,9 +11,10 @@ import { SettingsService } from './services/settings.service';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  // Inject SettingsService so preferences load ASAP and CSS var is applied globally
+  // Root of the application. We eagerly touch SettingsService so that
+  // persisted preferences (accent color) are loaded before any UI renders.
   constructor(private readonly settings: SettingsService) {
-    // Register commonly used icons globally
+    // Register commonly used icons globally (used by Settings buttons)
     addIcons({ settingsOutline });
     // Touch the service to ensure initialization side-effects (loading accent color)
     void this.settings; // no-op, just to keep reference

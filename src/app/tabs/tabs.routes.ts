@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
+// Central route config for the two-tab app. Tab3 was intentionally removed
+// per requirements; we keep only Basic (tab1) and Scientific (tab2).
+
 export const routes: Routes = [
   {
     path: 'tabs',

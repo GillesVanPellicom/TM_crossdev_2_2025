@@ -2,6 +2,20 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
+/**
+ * CalculatorService
+ * -----------------
+ * Holds the reactive calculator state and logic shared by Basic (Tab 1)
+ * and Scientific (Tab 2) UIs. Exposes
+ *  - expression$: current input expression as text
+ *  - result$: current computed result as text
+ *
+ * Provides input methods (digit/op/dot/backspace/clear/equals) and
+ * scientific helpers (pow, paren, func, constant). Uses a sanitized
+ * evaluation path that maps user-friendly tokens to JS/Math.* safely.
+ * Integrates Capacitor Haptics for tap feedback where supported.
+ */
+
 @Injectable({ providedIn: 'root' })
 export class CalculatorService {
   private readonly exprSubject = new BehaviorSubject<string>('');
@@ -18,6 +32,7 @@ export class CalculatorService {
     } catch {}
   }
 
+  /** Append a digit to the expression and update the live result. */
   digit(d: string) {
     this.haptic();
     if (this.lastWasEquals) {
@@ -30,6 +45,7 @@ export class CalculatorService {
     this.safeEval(expr);
   }
 
+  /** Insert a decimal point, preventing double-dot in the current number. */
   dot() {
     this.haptic();
     const expr = this.exprSubject.value;
@@ -40,6 +56,7 @@ export class CalculatorService {
     this.exprSubject.next(next);
   }
 
+  /** Insert or replace the last operator, allowing leading +/- only. */
   op(op: string) {
     this.haptic();
     let expr = this.exprSubject.value;
@@ -56,11 +73,13 @@ export class CalculatorService {
     this.lastWasEquals = false;
   }
 
+  /** Insert exponent caret ('^'); translated to JS '**' during eval. */
   pow() {
     // insert caret which we will translate to ** on eval
     this.op('^');
   }
 
+  /** Append a parenthesis and update the live result if possible. */
   paren(ch: '(' | ')') {
     this.haptic();
     const expr = this.exprSubject.value + ch;
@@ -69,6 +88,7 @@ export class CalculatorService {
     this.safeEval(expr);
   }
 
+  /** Insert a function token followed by an opening parenthesis. */
   func(name: 'sin' | 'cos' | 'tan' | 'sqrt' | 'ln' | 'log') {
     this.haptic();
     // append function with opening paren
@@ -76,6 +96,7 @@ export class CalculatorService {
     this.exprSubject.next(expr);
   }
 
+  /** Append a mathematical constant (pi or e) and update the live result. */
   constant(name: 'pi' | 'e') {
     this.haptic();
     const expr = this.exprSubject.value + name;
@@ -83,6 +104,7 @@ export class CalculatorService {
     this.safeEval(expr);
   }
 
+  /** Remove the last character and refresh the live result. */
   backspace() {
     this.haptic();
     const expr = this.exprSubject.value.slice(0, -1);
@@ -90,6 +112,7 @@ export class CalculatorService {
     this.safeEval(expr);
   }
 
+  /** Reset the calculator to an empty expression and 0 result. */
   clear() {
     this.haptic();
     this.exprSubject.next('');
@@ -97,6 +120,7 @@ export class CalculatorService {
     this.lastWasEquals = false;
   }
 
+  /** Evaluate and commit the result as the new expression. */
   equals() {
     this.haptic(false);
     const expr = this.exprSubject.value;
@@ -108,6 +132,13 @@ export class CalculatorService {
     }
   }
 
+  /**
+   * Evaluate the expression safely by:
+   * - Early rejecting illegal characters / unfinished ops
+   * - Mapping user tokens to JS/Math.* equivalents
+   * - Executing in a tiny Function scope with `with(Math){...}`
+   * - Returning null on error/NaN/Infinity
+   */
   private safeEval(expr: string): number | null {
     if (!expr) {
       this.resultSubject.next('0');

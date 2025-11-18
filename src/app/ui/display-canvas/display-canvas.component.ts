@@ -5,19 +5,28 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { NgIf } from '@angular/common';
-import { IonItem } from '@ionic/angular/standalone';
 import { Subscription, combineLatest } from 'rxjs';
 import { CalculatorService } from '../../services/calculator.service';
 import { SettingsService } from '../../services/settings.service';
 
+/**
+ * Canvas-based display for the calculator.
+ *
+ * Renders the current expression (small, grey) and result (large, accent color)
+ * using a high-DPI aware canvas. Subscribes to:
+ *  - CalculatorService: expression$ and result$
+ *  - SettingsService: accentColor$
+ *
+ * Keeps last known values so we can redraw on resizes without re-subscribing.
+ */
 @Component({
   selector: 'app-display-canvas',
   template: `
     <canvas #canvas style="width: 100%; height: 120px; display: block;"></canvas>
   `,
   standalone: true,
-  imports: [NgIf, IonItem],
+  // No external imports needed for this simple inline template
+  imports: [],
 })
 export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
@@ -31,7 +40,9 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
   private lastColor = '#3880ff';
 
   constructor(
+    // Current expression/result values
     private calc: CalculatorService,
+    // Accent color preference
     private settings: SettingsService
   ) {}
 
@@ -42,6 +53,7 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
       this.draw(this.lastExpr, this.lastResult, this.lastColor);
     });
 
+    // React to any of the three streams changing and redraw
     this.sub = combineLatest([
       this.calc.expression$,
       this.calc.result$,
@@ -59,6 +71,7 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
     this.lastColor = this.settings.getAccentColor();
 
     // Listen to element size changes using ResizeObserver for reliable layout handling
+    // Resize-aware rendering (for layout changes)
     this.resizeObs = new ResizeObserver(() => {
       this.resizeCanvas();
       this.draw(this.lastExpr, this.lastResult, this.lastColor);
@@ -80,6 +93,10 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
     this.draw(this.lastExpr, this.lastResult, this.lastColor);
   };
 
+  /**
+   * Sets the canvas backing store size accounting for device pixel ratio
+   * so text stays crisp on retina/high-DPI screens.
+   */
   private resizeCanvas() {
     const canvas = this.canvasRef.nativeElement;
     const rect = canvas.getBoundingClientRect();
@@ -90,6 +107,9 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
     if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
+  /**
+   * Draws the expression and result right-aligned inside the canvas.
+   */
   private draw(expr: string, result: string, color: string) {
     const canvas = this.canvasRef.nativeElement;
     const ctx = canvas.getContext('2d');
@@ -100,8 +120,7 @@ export class DisplayCanvasComponent implements AfterViewInit, OnDestroy {
     // clear
     ctx.clearRect(0, 0, w, h);
 
-    // background (card matches)
-    // draw expression small, result big, right aligned
+    // Draw expression small, result big, right aligned
     ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ion-color-step-50') || '#fff';
     // not filling background to keep ion-card style
 
