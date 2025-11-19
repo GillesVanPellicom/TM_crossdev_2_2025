@@ -1,0 +1,161 @@
+\documentclass{report}
+\usepackage{amsmath, amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes, calc, fit}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\geometry{margin=1in}
+
+\title{Lab 2: Ionic/Angular Testcase for Android\\\large YT0798 Cross Development, Thomas More}
+\author{Gilles Van pellicom}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\clearpage
+
+% ---------------------------
+% Notes
+% ---------------------------
+\chapter*{Notes on the Process}
+\addcontentsline{toc}{chapter}{Notes}
+
+\section*{Reproducability}
+\begin{itemize}
+    \item \textbf{Development \& Compilation environment:}
+    \begin{itemize}
+        \item \textbf{Platform:} macOS Tahoe 26.1
+        \item \textbf{Hardware:} M3 Pro, 36\,GB LPDDR5
+        \item \textbf{IDE:} IntelliJ 2025.2.4
+        \item \textbf{Emulator:} Android Studio 2025.2.1 patch 1 "Otter"
+    \end{itemize}
+
+    \item \textbf{Testing environment:}
+    \begin{itemize}
+        \item \textbf{Platform:} Android 15 (kernel 6.1.124android14-11-gf044a08b82f5-ab13293802)
+        \item \textbf{Hardware:} MediaTek Dimensity 7300 Pro 5G, 8\,GB LPDDR5
+    \end{itemize}
+\end{itemize}
+
+% ---------------------------
+% Testcase
+% ---------------------------
+\chapter{Testcase}
+
+\section{Requirements and Fulfillment}
+
+The test case consists of:
+
+\begin{itemize}
+  \item \textbf{Standard Ionic components:} Implemented using \texttt{<ion-grid>}, \texttt{<ion-row>}, and \texttt{<ion-button>} for styling, inputs, etc.
+  \item \textbf{Custom component using canvas:} Renders expression/result on a high-DPI-aware \texttt{<canvas>}.
+  \item \textbf{Dialog for selecting an accent color:} Settings dialog includes \texttt{<input type="color">} for accent color selection.
+  \item \textbf{File I/O for settings storage:} Selected accent color stored persistently using \texttt{@capacitor/preferences}.
+  \item \textbf{Non-default Capacitor plugin:} Utilised \texttt{@capacitor/haptics} for haptic feedback on button presses.
+  \item \textbf{Two pages with shared state:} \texttt{CalculatorService} and \texttt{SettingsService} are shared between pages \texttt{tab1}, \texttt{tab2} and settings modal. These services are located under \texttt{/src/app/services}
+\end{itemize}
+
+\section{Portability Considerations}
+
+Since the project was built in Ionic, the project was built with portability from the ground up. On my development machine the project required no special considerations except for the installation of the correct android/iOS toolchains for portability and successful cross-compilation. Some highlights of using Ionic for portability:
+
+\begin{itemize}
+  \item \textbf{Capacitor plugins:} Utilized capacitor plugins for access to OS function in an OS-agnostic manner.
+  \item \textbf{OS-agnostic color picker:} Leveraged Ionic's \texttt{<input type="color">} to handle color selection, allowing Ionic to manage platform-specific details seamlessly.
+\end{itemize}
+
+% ---------------------------
+% Chapter 1
+% ---------------------------
+\chapter{Toolchain Setup and Workflow}
+
+\section{Prerequisites}
+Ionic requires Node.js.
+Install using macOS package manager brew:
+
+\begin{verbatim}
+brew install node
+\end{verbatim}
+Install ionic CLI:
+
+\begin{verbatim}
+npm install -g @ionic/cli
+\end{verbatim}
+Verify installation:
+
+\begin{verbatim}
+ionic --version
+\end{verbatim}
+
+\section{Project Initialization}
+Create an Ionic Angular project in the current folder:
+
+\begin{verbatim}
+ionic start . --type=angular
+\end{verbatim}
+Follow prompts. Select default behavior and \texttt{tabs} starter project.
+
+\section{Running the Project in Browser}
+Start the development server to verify the project works:
+
+\begin{verbatim}
+ionic serve
+\end{verbatim}
+The \texttt{tabs} app will open in the default browser
+
+\section{Running the Project on Device}
+
+\subsection{Android}
+Run the following command to bundle the project:
+\begin{verbatim}
+ionic build
+\end{verbatim}
+The location of Android studio must be in the PATH for the project to sync with Android Studio:
+
+\begin{verbatim}
+export CAPACITOR_ANDROID_STUDIO_PATH="/Users/gvp/Applications/Android Studio.app"
+source ~/.zshrc
+\end{verbatim}
+Now we can sync with Android Studio to emulate the app:
+
+\begin{verbatim}
+npx cap sync android
+npx cap open android
+\end{verbatim}
+Once in Android Studio, select an emulator to test the app.
+If a physical device is required, e.g. to test features such as haptics, an Android debug-enabled device can paired like so:
+\newline
+\newline
+Make sure Android Debug Bridge (ADB) is installed.
+Navigate to "Android Wireless Debugging" in the device settings and find the device's IP and port. Take note of the pairing code.
+
+\begin{verbatim}
+adb pair 192.168.0.227:44499
+\end{verbatim}
+Continue by entering the pairing code when prompted to complete the pair.
+The device will now show up as a target in Android Studio. Recompile the project with the new device as target to test the app.
+
+\subsection{iOS}
+
+The basic process remain the same compared to Android.
+Instead of Android Studio we use Xcode, which is streamlined for use on macOS.
+No additional setup should be required.
+
+\begin{verbatim}
+ionic build
+npx cap sync ios
+npx cap open ios
+\end{verbatim}
+Now the app can be tested for iOS
+
+\section{Outcome}
+
+Aside from the localhost-served website, a working native-Android build of the testcase was achieved utilising Ionic/Angular, and was tested on emulator and on device via ADB.
+
+A Screenshot of the successful deployment on device is provided in the \texttt{screenshots} folder.
+
+\end{document}
